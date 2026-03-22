@@ -1,0 +1,4 @@
+2026-03-22 12:32:55 | INFO     | HTTP Request: POST https://api.telegram.org/bot7537529456:AAG_b1DKOq0wdHDr61eIntsEZl8zALmsFjQ/getMe "HTTP/1.1 401 Unauthorized"
+2026-03-22 12:32:55 | ERROR    | Failed to start bot: The token `7537529456:AAG_b1DKOq0wdHDr61eIntsEZl8zALmsFjQ` was rejected by the server.
+2026-03-22 12:32:55 | ERROR    | CRITICAL: Your Telegram Bot Token is INVALID. Please check @BotFather.
+2026-03-22 12:32:55 | INFO     | Auto-cleanup: 1 items removed from downloads folder.

@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hinata Bot | Elite Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Premium Animated Background -->
+    <div class="background-blobs">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="overlay" style="display: flex;">
+      <div class="glass-card modal" style="text-align: center;">
+        <div class="stat-icon" style="margin: 0 auto 1.5rem;"><i class="fa-solid fa-lock"></i></div>
+        <h2 style="margin-bottom: 1rem;">Neural Access Required</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Please enter your master security PIN to access the neural core.</p>
+        <div class="form-group">
+          <input type="password" id="login-password" placeholder="Enter security PIN..." style="text-align: center; letter-spacing: 5px; font-size: 1.2rem;">
+        </div>
+        <button class="btn btn-primary" onclick="attemptLogin()" style="width: 100%; justify-content: center;">
+          <i class="fa-solid fa-key"></i> Decrypt & Enter
+        </button>
+        <p id="login-error" style="color: var(--danger); margin-top: 1rem; display: none; font-size: 0.9rem;">❌ Invalid security PIN. Access denied.</p>
+      </div>
+    </div>
+
+    <!-- Glass Navbar -->
+    <nav class="glass-navbar">
+      <a href="#" class="nav-logo">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        HINATA <span class="v-tag">v3.0 PRO</span>
+      </a>
+      <div class="nav-status">
+        <div class="status-dot" id="bot-status-dot"></div>
+        <span id="bot-status-text">Connecting...</span>
+      </div>
+      <button class="btn btn-secondary" onclick="logout()" style="padding: 8px 15px; font-size: 0.8rem;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </nav>
+
+    <div class="dashboard-container">
+      <!-- Statistics Overview -->
+      <div class="stats-grid">
+        <div class="glass-card stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-info">
+            <h3>Total Users</h3>
+            <p id="stat-users">0</p>
+          </div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-house-chimney"></i></div>
+          <div class="stat-info">
+            <h3>Total Groups</h3>
+            <p id="stat-groups">0</p>
+          </div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+          <div class="stat-info">
+            <h3>Total Messages</h3>
+            <p id="stat-messages">0</p>
+          </div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div class="stat-info">
+            <h3>System Uptime</h3>
+            <p id="stat-uptime">00:00:00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Operational Grid -->
+      <div class="control-grid">
+        <!-- System Controls -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-sliders"></i> Master Controls</h2>
+          </div>
+
+            <div class="status-panel" id="bot-status-panel">
+              <div class="status-item">
+                <span class="status-dot" id="bot-power-dot"></span>
+                <div>
+                  <div class="status-label">Bot Power</div>
+                  <div class="status-value" id="bot-power-value">Unknown</div>
+                </div>
+              </div>
+              <div class="status-item">
+                <span class="status-dot" id="global-access-dot"></span>
+                <div>
+                  <div class="status-label">Global Access</div>
+                  <div class="status-value" id="global-access-value">Unknown</div>
+                </div>
+              </div>
+              <div class="status-item">
+                <span class="status-dot" id="couple-enabled-dot"></span>
+                <div>
+                  <div class="status-label">Couple Commands</div>
+                  <div class="status-value" id="couple-enabled-value">Unknown</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="controlBot('restart')">
+                <i class="fa-solid fa-power-off"></i> Restart Bot
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="controlBot('toggle_bot')"
+              >
+                <i class="fa-solid fa-circle-pause"></i> Toggle Status
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="controlBot('toggle_bot_enabled')"
+              >
+                <i class="fa-solid fa-toggle-on"></i> Bot On/Off
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="controlBot('clear_logs')"
+              >
+                <i class="fa-solid fa-broom"></i> Wipe Logs
+              </button>
+              <button
+                class="btn btn-danger"
+                onclick="controlBot('toggle_access')"
+              >
+                <i class="fa-solid fa-shield-halved"></i> Global Access
+              </button>
+              <button class="btn btn-secondary" onclick="trackUsers()">
+                <i class="fa-solid fa-fingerprint"></i> Deep Track
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="downloadDB()"
+              >
+                <i class="fa-solid fa-download"></i> Download DB
+              </button>
+            </div>
+
+          <div
+            class="card-header"
+            style="margin-top: 2.5rem; margin-bottom: 1rem"
+          >
+            <h2><i class="fa-solid fa-key"></i> Bot Authentication</h2>
+          </div>
+          <div class="form-group">
+            <label>Encrypted Token (Active)</label>
+            <div
+              style="
+                background: rgba(0, 0, 0, 0.3);
+                padding: 12px;
+                border-radius: 12px;
+                font-family: monospace;
+                color: var(--text-muted);
+                margin-bottom: 15px;
+              "
+              id="masked-token-view"
+            >
+              ••••••••••••••••••••••••••••••••
+            </div>
+            <label>Update Token</label>
+            <div class="input-wrapper" style="display: flex; gap: 10px">
+              <input
+                type="password"
+                id="bot-token-input"
+                placeholder="Paste new bot token here..."
+              />
+              <button
+                class="btn btn-primary"
+                onclick="updateBotToken()"
+                style="padding: 10px 20px"
+              >
+                Update
+              </button>
+            </div>
+            <small
+              style="color: var(--text-muted); margin-top: 8px; display: block"
+              >Updating token requires a bot restart to apply changes.</small
+            >
+          </div>
+
+          <div
+            class="card-header"
+            style="margin-top: 2rem; margin-bottom: 1rem"
+          >
+            <h2><i class="fa-solid fa-face-smile"></i> AI Personality Core</h2>
+          </div>
+          <div class="form-group">
+            <label>Current Mood</label>
+            <div class="input-wrapper" style="display: flex; gap: 10px">
+              <select
+                id="bot-mood-select"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  background: rgba(0, 0, 0, 0.3);
+                  border: 1px solid var(--border);
+                  color: var(--text-muted);
+                  border-radius: 8px;
+                "
+              >
+                <option value="flirty">Flirty & Loving</option>
+                <option value="rude">Rude & Sassy</option>
+                <option value="angry">Angry & Annoyed</option>
+                <option value="roaster">Savage Roaster</option>
+                <option value="shy">Shy & Blushing</option>
+              </select>
+              <button
+                class="btn btn-primary"
+                onclick="updateBotMood()"
+                style="padding: 10px 20px"
+              >
+                Save Mood
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="card-header"
+            style="margin-top: 2rem; margin-bottom: 1rem"
+          >
+            <h2><i class="fa-solid fa-image"></i> Asset Matrix</h2>
+          </div>
+          <div class="form-group">
+            <label>Primary Welcome Image (URL)</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="welcome-img-input"
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Fallback Assets (URL)</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="fallback-img-input"
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tracked User ID</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="tracked-user-input"
+                placeholder="7039869055"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Forward Group ID</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="forward-group-input"
+                placeholder="-1002768142169"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Couple Background (URL)</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="couple-bg-input"
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="couple-enabled-checkbox" />
+            <label for="couple-enabled-checkbox" style="margin: 0;">Enable <code>/couple</code> commands</label>
+          </div>
+          <button class="btn btn-primary" onclick="updateAssets()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Sync Assets & Config
+          </button>
+        </div>
+
+        <!-- Admin Operations -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-gavel"></i> Admin Operations</h2>
+          </div>
+          <div class="form-group">
+            <label>Target User ID</label>
+            <input
+              type="text"
+              id="admin-user-id"
+              placeholder="Enter User ID..."
+              class="input-wrapper"
+              style="
+                width: 100%;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--border);
+                color: var(--text-muted);
+                border-radius: 8px;
+              "
+            />
+          </div>
+          <div class="form-group" style="margin-top: 10px">
+            <label>Target Group ID (Optional for global actions)</label>
+            <input
+              type="text"
+              id="admin-group-id"
+              placeholder="Enter Group ID..."
+              class="input-wrapper"
+              style="
+                width: 100%;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--border);
+                color: var(--text-muted);
+                border-radius: 8px;
+              "
+            />
+          </div>
+          <div class="btn-group" style="margin-top: 15px">
+            <button class="btn btn-danger" onclick="executeAdmin('ban')">
+              <i class="fa-solid fa-ban"></i> Ban
+            </button>
+            <button class="btn btn-secondary" onclick="executeAdmin('unban')">
+              <i class="fa-solid fa-check"></i> Unban
+            </button>
+            <button class="btn btn-danger" onclick="executeAdmin('kick')">
+              <i class="fa-solid fa-shoe-prints"></i> Kick
+            </button>
+            <button class="btn btn-secondary" onclick="executeAdmin('mute')">
+              <i class="fa-solid fa-microphone-slash"></i> Mute
+            </button>
+            <button class="btn btn-secondary" onclick="executeAdmin('unmute')">
+              <i class="fa-solid fa-microphone"></i> Unmute
+            </button>
+            <button class="btn btn-primary" onclick="executeAdmin('addadmin')">
+              <i class="fa-solid fa-user-shield"></i> Make Admin
+            </button>
+            <button
+              class="btn btn-warning"
+              onclick="executeAdmin('removeadmin')"
+            >
+              <i class="fa-solid fa-user-slash"></i> Remove Admin
+            </button>
+          </div>
+        </div>
+
+        <!-- Delete Message Operation -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-trash-can"></i> Message Management</h2>
+          </div>
+          <div class="form-group">
+            <label>Specific Message URL</label>
+            <input
+              type="text"
+              id="admin-msg-url"
+              placeholder="e.g. https://t.me/c/123456789/123"
+              class="input-wrapper"
+              style="
+                width: 100%;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--border);
+                color: var(--text-muted);
+                border-radius: 8px;
+              "
+            />
+          </div>
+          <div class="btn-group" style="margin-top: 15px">
+            <button class="btn btn-danger" onclick="executeMessageAction('delete')">
+              <i class="fa-solid fa-eraser"></i> Delete
+            </button>
+            <button
+              class="btn btn-info"
+              onclick="executeMessageAction('pin')"
+              style="background-color: #17a2b8; border-color: #17a2b8"
+            >
+              <i class="fa-solid fa-thumbtack"></i> Pin
+            </button>
+            <button
+              class="btn btn-info"
+              onclick="executeMessageAction('unpin')"
+              style="background-color: #17a2b8; border-color: #17a2b8"
+            >
+              <i class="fa-solid fa-thumbtack-slash"></i> Unpin
+            </button>
+          </div>
+        </div>
+
+        <!-- Broadcast Center -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-paper-plane"></i> Broadcast Engine</h2>
+          </div>
+          <div class="form-group">
+            <label>Campaign Content (Text or Caption)</label>
+            <textarea
+              id="broadcast-msg"
+              placeholder="Draft your global message or photo caption... High priority only."
+            ></textarea>
+          </div>
+          <div class="form-group" style="margin-top: 10px">
+            <label>📸 Photo URL (Optional — for media broadcast)</label>
+            <input
+              type="text"
+              id="broadcast-photo-url"
+              style="
+                width: 100%;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--border);
+                color: var(--text-muted);
+                border-radius: 8px;
+              "
+              placeholder="https://... (leave empty for text-only broadcast)"
+            />
+            <small style="color: var(--text-muted); margin-top: 5px; display: block;">
+              💡 If a photo URL is provided, the message above becomes the <b>caption</b>. Supports Telegram file_id or direct image URL.
+            </small>
+          </div>
+          <div class="form-group" style="margin-top: 10px">
+            <label>Specific Target ID (Optional)</label>
+            <input
+              type="text"
+              id="broadcast-target-id"
+              style="
+                width: 100%;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.3);
+                border: 1px solid var(--border);
+                color: var(--text-muted);
+                border-radius: 8px;
+              "
+              placeholder="Leave empty for 'All', 'Users', or 'Groups'. Or enter User/Group ID here..."
+            />
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="sendBroadcast('all')">
+              <i class="fa-solid fa-globe"></i> Send to All
+            </button>
+            <button class="btn btn-secondary" onclick="sendBroadcast('users')">
+              <i class="fa-solid fa-user"></i> Users Only
+            </button>
+            <button class="btn btn-secondary" onclick="sendBroadcast('groups')">
+              <i class="fa-solid fa-users-viewfinder"></i> Groups Only
+            </button>
+            <button
+              class="btn btn-secondary"
+              onclick="sendBroadcast('specific')"
+            >
+              <i class="fa-solid fa-bullseye"></i> Specific Target
+            </button>
+          </div>
+        </div>
+
+        <!-- System Terminal -->
+        <div class="glass-card" style="grid-column: 1 / -1">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-terminal"></i> Neural Logs (Live)</h2>
+            <span class="v-tag" style="background: var(--secondary)"
+              >REAL-TIME</span
+            >
+          </div>
+          <div class="logs-container" id="logs-container">
+            <div class="log-entry system">
+              Awaiting logs from neural engine...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Insights -->
+      <h2 class="section-title">
+        <i class="fa-solid fa-chart-pie"></i> Database Insights
+      </h2>
+      <div class="control-grid">
+        <div class="glass-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-bolt"></i> Recent Activations</h2>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>User</th>
+                  <th>Joined</th>
+                </tr>
+              </thead>
+              <tbody id="users-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="glass-card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-link"></i> Linked Groups</h2>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Linked</th>
+                </tr>
+              </thead>
+              <tbody id="groups-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Master Command Deck -->
+      <div class="glass-card" style="margin-bottom: 4rem">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-book-sparkles"></i> Master Command Deck</h2>
+        </div>
+        <div class="commands-container">
+          <div class="command-box">
+            <div class="cmd-group-title">
+              <i class="fa-solid fa-brain"></i> Neural Systems
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/gemini</span>
+              <span class="cmd-desc">Google Gemini 3.0 Integration</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/chatgpt</span>
+              <span class="cmd-desc">Advanced GPT-5 Reasoning</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/mistral</span>
+              <span class="cmd-desc">Mistral 3.1 Neural Interface</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/zerotwo</span>
+              <span class="cmd-desc">Uncensored Romance AI Companion</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/imagine</span>
+              <span class="cmd-desc">Flux-Based Image Generation</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/detector</span>
+              <span class="cmd-desc">AI Content Verification Tool</span>
+            </div>
+          </div>
+
+          <div class="command-box">
+            <div class="cmd-group-title">
+              <i class="fa-solid fa-screwdriver-wrench"></i> Utility Matrix
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/dl</span>
+              <span class="cmd-desc">Universal Multi-Platform Downloader</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/webss</span>
+              <span class="cmd-desc">High-Res Website Captures</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/tempmail</span>
+              <span class="cmd-desc">Ephemeral Email Box Generation</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/email</span>
+              <span class="cmd-desc">Anonymous SMTP Relaying</span>
+            </div>
+          </div>
+
+          <div class="command-box">
+            <div class="cmd-group-title">
+              <i class="fa-solid fa-fire"></i> Specialized Core
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/ff</span>
+              <span class="cmd-desc">Player Meta-Data Scraper</span>
+            </div>
+            <div class="cmd-item">
+              <span class="cmd-name">/visit</span>
+              <span class="cmd-desc">FF Account Visit System</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Records Section -->
+      <div class="glass-card table-card">
+        <div class="card-header">
+          <h2>
+            <i class="fa-solid fa-database"></i> Global Intelligence Registry
+          </h2>
+        </div>
+        <div class="table-controls">
+          <input
+            type="text"
+            id="user-search"
+            class="search-input"
+            placeholder="Resolve ID or Identity..."
+            onkeyup="filterUsers()"
+          />
+          <button class="btn btn-secondary" onclick="refreshData()">
+            <i class="fa-solid fa-rotate"></i> Sync Data
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table id="master-users-table">
+            <thead>
+              <tr>
+                <th>Identity ID</th>
+                <th>Neural Name</th>
+                <th>Handle</th>
+                <th>Registration</th>
+              </tr>
+            </thead>
+            <tbody id="master-users-body">
+              <tr>
+                <td colspan="4">Synchronizing with registry...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Global Groups Registry -->
+      <div class="glass-card table-card" style="margin-top: 3rem">
+        <div class="card-header">
+          <h2>
+            <i class="fa-solid fa-users-viewfinder"></i> Global Groups Registry
+          </h2>
+        </div>
+        <div class="table-controls">
+          <input
+            type="text"
+            id="group-search"
+            class="search-input"
+            placeholder="Search Group ID or Title..."
+            onkeyup="filterGroups()"
+          />
+        </div>
+        <div class="table-wrapper">
+          <table id="master-groups-table">
+            <thead>
+              <tr>
+                <th>Group ID</th>
+                <th>Group Title</th>
+                <th>Type</th>
+                <th>Integration Date</th>
+              </tr>
+            </thead>
+            <tbody id="master-groups-body">
+              <tr>
+                <td colspan="4">Synchronizing with registry...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Transmission History -->
+      <div class="glass-card table-card" style="margin-top: 3rem">
+        <div class="card-header">
+          <h2>
+            <i class="fa-solid fa-clock-rotate-left"></i> Transmission History
+          </h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Snippet</th>
+                <th>Sector</th>
+                <th>State</th>
+                <th>Timestamp</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="broadcasts-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- File Registry (Downloads) -->
+      <div class="glass-card table-card" style="margin-top: 3rem">
+        <div class="card-header">
+          <h2>
+            <i class="fa-solid fa-folder-open"></i> Neural Storage Registry
+          </h2>
+          <button
+            class="btn btn-secondary"
+            onclick="controlBot('clear_downloads')"
+          >
+            <i class="fa-solid fa-broom"></i> Clear Registry
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Magnitude (Size)</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="files-body">
+              <tr>
+                <td colspan="3">Scanning storage segments...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Blacklist Matrix -->
+      <div class="glass-card table-card" style="margin-top: 3rem">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-user-slash"></i> Blacklist Matrix</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody id="banned-users-body">
+              <tr>
+                <td colspan="2">No active bans in neural network.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- ⚡  GROUP COMMAND CENTER  ⚡                                   -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:4rem;">
+        <i class="fa-solid fa-people-group"></i> Group Command Center
+        <span class="v-tag" style="background:linear-gradient(135deg,#f43f5e,#f472b6);">ELITE</span>
+      </h2>
+
+      <!-- Step 1 – Group ID Input -->
+      <div class="glass-card gcc-lookup-card" id="gcc-lookup-card">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-magnifying-glass-location"></i> Group Intelligence Scan</h2>
+          <span class="gcc-badge">LIVE SCAN</span>
+        </div>
+        <div class="gcc-search-row">
+          <div style="flex:1; position:relative;">
+            <i class="fa-solid fa-hashtag gcc-input-icon"></i>
+            <input type="text" id="gcc-group-id" class="gcc-id-input"
+              placeholder="Enter Group / Channel ID  (e.g. -1001234567890)" />
+          </div>
+          <button class="btn btn-primary gcc-scan-btn" onclick="gccScanGroup()">
+            <i class="fa-solid fa-radar"></i> Scan Group
+          </button>
+          <button class="btn btn-secondary" onclick="gccClearAll()" title="Clear Results">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <!-- Group Info Banner -->
+        <div id="gcc-group-info" class="gcc-group-banner" style="display:none;"></div>
+        <!-- Loading Spinner -->
+        <div id="gcc-loading" class="gcc-spinner-wrap" style="display:none;">
+          <div class="gcc-spinner"></div>
+          <span>Scanning neural network…</span>
+        </div>
+      </div>
+
+      <!-- Step 2 – Member List -->
+      <div class="glass-card gcc-members-card" id="gcc-members-card" style="display:none; margin-top:2rem;">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-users-rays"></i> Member Intelligence Registry</h2>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <span class="gcc-badge" id="gcc-count-badge">0 Members</span>
+            <input type="text" id="gcc-member-search" class="search-input"
+              placeholder="Search member…" oninput="gccFilterMembers()" style="max-width:220px;padding:8px 12px 8px 2.4rem;" />
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table id="gcc-members-table">
+            <thead>
+              <tr>
+                <th style="width:40px;"><input type="checkbox" id="gcc-select-all" onchange="gccToggleAll(this)" title="Select All" /></th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="gcc-members-body">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No members loaded.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Step 3 – Bulk Action Panel -->
+      <div class="glass-card gcc-bulk-card" id="gcc-bulk-card" style="display:none; margin-top:2rem;">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-bolt-lightning"></i> Bulk Operations</h2>
+          <span class="gcc-badge gcc-badge-warn" id="gcc-selected-label">0 Selected</span>
+        </div>
+        <div class="gcc-action-grid">
+
+          <!-- Moderation -->
+          <div class="gcc-action-box">
+            <div class="gcc-action-box-title"><i class="fa-solid fa-gavel"></i> Moderation</div>
+            <div class="gcc-btn-wrap">
+              <button class="btn btn-danger gcc-act-btn" onclick="gccBulkAction('kick_all')">
+                <i class="fa-solid fa-person-walking-arrow-right"></i> Kick All
+              </button>
+              <button class="btn btn-danger gcc-act-btn" onclick="gccBulkAction('ban_all')">
+                <i class="fa-solid fa-ban"></i> Ban All
+              </button>
+              <button class="btn btn-warning gcc-act-btn" onclick="gccBulkAction('mute_all')">
+                <i class="fa-solid fa-microphone-slash"></i> Mute All
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccBulkAction('unmute_all')">
+                <i class="fa-solid fa-microphone"></i> Unmute All
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccBulkAction('unban_all')">
+                <i class="fa-solid fa-unlock"></i> Unban All
+              </button>
+              <button class="btn btn-danger gcc-act-btn" onclick="gccBulkAction('remove_deleted')">
+                <i class="fa-solid fa-ghost"></i> Remove Deleted Accounts
+              </button>
+            </div>
+          </div>
+
+          <!-- Message Management -->
+          <div class="gcc-action-box">
+            <div class="gcc-action-box-title"><i class="fa-solid fa-trash-can"></i> Message Wipe</div>
+            <div class="gcc-btn-wrap">
+              <button class="btn btn-danger gcc-act-btn" onclick="gccDeleteMsgs('all')">
+                <i class="fa-solid fa-bomb"></i> Delete ALL Messages
+              </button>
+              <div style="margin-top:10px;">
+                <label class="gcc-sub-label">Delete msgs from specific user</label>
+                <div style="display:flex;gap:8px;margin-top:6px;">
+                  <input type="text" id="gcc-del-user-id" placeholder="User ID…" style="padding:8px;border-radius:10px;" />
+                  <button class="btn btn-danger" style="padding:8px 14px;" onclick="gccDeleteMsgs('user')">
+                    <i class="fa-solid fa-eraser"></i> Wipe
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Group Settings -->
+          <div class="gcc-action-box">
+            <div class="gcc-action-box-title"><i class="fa-solid fa-gear"></i> Group Settings</div>
+            <div class="gcc-btn-wrap">
+              <div class="gcc-field">
+                <label class="gcc-sub-label">New Group Title</label>
+                <div style="display:flex;gap:8px;">
+                  <input type="text" id="gcc-new-title" placeholder="New title…" style="padding:8px;border-radius:10px;" />
+                  <button class="btn btn-secondary" style="padding:8px 14px;" onclick="gccGroupSetting('set_title')">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="gcc-field">
+                <label class="gcc-sub-label">New Description</label>
+                <div style="display:flex;gap:8px;">
+                  <input type="text" id="gcc-new-desc" placeholder="New description…" style="padding:8px;border-radius:10px;" />
+                  <button class="btn btn-secondary" style="padding:8px 14px;" onclick="gccGroupSetting('set_description')">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                </div>
+              </div>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('lock_group')">
+                <i class="fa-solid fa-lock"></i> Lock Group (Restrict All)
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('unlock_group')">
+                <i class="fa-solid fa-lock-open"></i> Unlock Group
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('disable_invite')">
+                <i class="fa-solid fa-link-slash"></i> Revoke Invite Link
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('enable_invite')">
+                <i class="fa-solid fa-link"></i> New Invite Link
+              </button>
+            </div>
+          </div>
+
+          <!-- Advanced Ops -->
+          <div class="gcc-action-box">
+            <div class="gcc-action-box-title"><i class="fa-solid fa-wand-sparkles"></i> Advanced Ops</div>
+            <div class="gcc-btn-wrap">
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('pin_latest')">
+                <i class="fa-solid fa-thumbtack"></i> Pin Latest Message
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('unpin_all')">
+                <i class="fa-solid fa-thumbtack" style="opacity:0.5;"></i> Unpin All Messages
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('get_invite_link')">
+                <i class="fa-solid fa-copy"></i> Get Invite Link
+              </button>
+              <button class="btn btn-secondary gcc-act-btn" onclick="gccGroupSetting('promote_all_admins')">
+                <i class="fa-solid fa-user-shield"></i> Make Selected Admins
+              </button>
+              <button class="btn btn-warning gcc-act-btn" onclick="gccGroupSetting('demote_all_admins')">
+                <i class="fa-solid fa-user-slash"></i> Demote All Admins
+              </button>
+              <button class="btn btn-danger gcc-act-btn" onclick="gccGroupSetting('leave_group')">
+                <i class="fa-solid fa-right-from-bracket"></i> Bot Leave Group
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress / Result Banner -->
+        <div id="gcc-result-banner" class="gcc-result" style="display:none;"></div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- 🗄  MANUAL DATABASE ENTRY                                       -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:4rem;">
+        <i class="fa-solid fa-database"></i> Manual Database Entry
+        <span class="v-tag" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">SEED DB</span>
+      </h2>
+      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;">
+        Manually register a group or user into the bot's database — useful for seeding data before the bot has interacted in that chat.
+        If the bot can reach Telegram, it will automatically fetch and overwrite with real info.
+      </p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;">
+
+        <!-- Add Group Card -->
+        <div class="glass-card" style="border-color:rgba(99,102,241,0.35);">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-people-group"></i> Add Group to DB</h2>
+            <span class="v-tag" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">GROUP</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.9rem;margin-top:1rem;">
+            <div>
+              <label class="form-label">Group ID <span style="color:var(--danger)">*</span></label>
+              <input id="mdb-group-id" type="text" class="form-control" placeholder="-100xxxxxxxxxx" />
+            </div>
+            <div>
+              <label class="form-label">Group Title <span style="color:var(--danger)">*</span></label>
+              <input id="mdb-group-title" type="text" class="form-control" placeholder="My Super Group" />
+            </div>
+            <div>
+              <label class="form-label">Type</label>
+              <select id="mdb-group-type" class="form-control">
+                <option value="supergroup">supergroup</option>
+                <option value="group">group</option>
+                <option value="channel">channel</option>
+              </select>
+            </div>
+            <button id="mdb-add-group-btn" class="btn btn-primary" onclick="mdbAddGroup()"
+                    style="background:linear-gradient(135deg,#6366f1,#8b5cf6);margin-top:.4rem;">
+              <i class="fa-solid fa-plus"></i> Add Group
+            </button>
+            <div id="mdb-group-result" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- Add User Card -->
+        <div class="glass-card" style="border-color:rgba(16,185,129,0.35);">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-user-plus"></i> Add User to DB</h2>
+            <span class="v-tag" style="background:linear-gradient(135deg,#10b981,#34d399);">USER</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.9rem;margin-top:1rem;">
+            <div>
+              <label class="form-label">User ID <span style="color:var(--danger)">*</span></label>
+              <input id="mdb-user-id" type="text" class="form-control" placeholder="7123456789" />
+            </div>
+            <div>
+              <label class="form-label">Full Name <span style="color:var(--danger)">*</span></label>
+              <input id="mdb-user-name" type="text" class="form-control" placeholder="John Doe" />
+            </div>
+            <div>
+              <label class="form-label">Username <span style="color:var(--text-muted);font-size:.8rem;">(optional)</span></label>
+              <input id="mdb-user-username" type="text" class="form-control" placeholder="@johndoe" />
+            </div>
+            <button id="mdb-add-user-btn" class="btn btn-primary" onclick="mdbAddUser()"
+                    style="background:linear-gradient(135deg,#10b981,#34d399);color:#0a0a0a;margin-top:.4rem;">
+              <i class="fa-solid fa-user-plus"></i> Add User
+            </button>
+            <div id="mdb-user-result" style="display:none;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 🎯  TRACKING & LOG CONTROL CENTER                             -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:4rem;">
+        <i class="fa-solid fa-satellite-dish"></i> Tracking &amp; Log Control Center
+        <span class="v-tag" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">NEURAL OPS</span>
+      </h2>
+
+      <!-- Row 1: Toggle switches + status -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-bottom:1.5rem;">
+
+        <!-- User Tracking Toggle -->
+        <div class="glass-card" style="border-color:rgba(6,182,212,0.3);">
+          <div class="card-header" style="margin-bottom:1.2rem;">
+            <h2><i class="fa-solid fa-user-secret" style="color:#06b6d4;"></i> Private Chat Tracking</h2>
+            <div class="tgl-wrap">
+              <label class="tgl-switch" title="Toggle User Tracking">
+                <input type="checkbox" id="tgl-user-tracking" onchange="toggleTracking('user_tracking_enabled', this.checked)" />
+                <span class="tgl-slider"></span>
+              </label>
+            </div>
+          </div>
+          <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.2rem;">
+            When <b style="color:#06b6d4;">ON</b>, all private chat messages and commands are forwarded to the <em>Private Log Destination</em>.
+          </p>
+          <div class="status-badge" id="status-user-tracking">
+            <i class="fa-solid fa-circle-dot fa-beat" style="color:#06b6d4;"></i> Loading...
+          </div>
+        </div>
+
+        <!-- Live Status Panel -->
+        <div class="glass-card" style="border-color:rgba(251,191,36,0.3);">
+          <div class="card-header" style="margin-bottom:1.2rem;">
+            <h2><i class="fa-solid fa-gauge-high" style="color:#fbbf24;"></i> Live ID Status</h2>
+            <button class="btn btn-secondary" onclick="loadTrackingConfig()" style="padding:7px 14px;font-size:.78rem;">
+              <i class="fa-solid fa-rotate"></i> Sync
+            </button>
+          </div>
+          <div id="tracking-status-grid" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="tsc-row"><span class="tsc-label">📥 Private Log</span><span class="tsc-val mono" id="tsc-dest">—</span></div>
+            <div class="tsc-row"><span class="tsc-label">👤 User 1 ID</span><span class="tsc-val mono" id="tsc-u1">—</span></div>
+            <div class="tsc-row"><span class="tsc-label">📤 User 1 Fwd</span><span class="tsc-val mono" id="tsc-f1">—</span></div>
+            <div class="tsc-row"><span class="tsc-label">👤 User 2 ID</span><span class="tsc-val mono" id="tsc-u2">—</span></div>
+            <div class="tsc-row"><span class="tsc-label">📤 User 2 Fwd</span><span class="tsc-val mono" id="tsc-f2">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Log Group IDs editor -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:1.5rem;">
+
+        <!-- Private Log Destination -->
+        <div class="glass-card" style="border-color:rgba(6,182,212,0.25);">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-inbox" style="color:#06b6d4;"></i> Private Log Destination</h2>
+          </div>
+          <p style="color:var(--text-muted);font-size:.82rem;margin:0 0 1rem;">All user private chat logs &amp; commands are forwarded here.</p>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="tc-dest-id" placeholder="-1002510490386" style="flex:1;" />
+            <button class="btn btn-primary" onclick="saveTrackingField('destination_group_id','tc-dest-id')"
+              style="padding:10px 16px;white-space:nowrap;background:linear-gradient(135deg,#06b6d4,#0891b2);">
+              <i class="fa-solid fa-save"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Tracked Users config -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:4rem;">
+
+        <!-- Tracked User 1 -->
+        <div class="glass-card" style="border-color:rgba(16,185,129,0.3);">
+          <div class="card-header" style="margin-bottom:1.3rem;">
+            <h2><i class="fa-solid fa-crosshairs" style="color:#10b981;"></i> Tracked User 1</h2>
+            <span class="v-tag" style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.4);">SLOT 1</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div>
+              <label class="tc-label"><i class="fa-solid fa-id-badge"></i> User ID to Track</label>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="tc-u1-id" placeholder="e.g. 7039869055" style="flex:1;" />
+                <button class="btn btn-primary" onclick="saveTrackingField('tracked_user1_id','tc-u1-id')"
+                  style="padding:10px 14px;background:linear-gradient(135deg,#10b981,#059669);">
+                  <i class="fa-solid fa-save"></i>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="tc-label"><i class="fa-solid fa-location-arrow"></i> Forward to Group ID</label>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="tc-f1-id" placeholder="e.g. -1002768142169" style="flex:1;" />
+                <button class="btn btn-primary" onclick="saveTrackingField('forward_user1_group_id','tc-f1-id')"
+                  style="padding:10px 14px;background:linear-gradient(135deg,#10b981,#059669);">
+                  <i class="fa-solid fa-save"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tracked User 2 -->
+        <div class="glass-card" style="border-color:rgba(244,63,94,0.3);">
+          <div class="card-header" style="margin-bottom:1.3rem;">
+            <h2><i class="fa-solid fa-crosshairs" style="color:#f43f5e;"></i> Tracked User 2</h2>
+            <span class="v-tag" style="background:rgba(244,63,94,0.2);color:#fb7185;border:1px solid rgba(244,63,94,0.4);">SLOT 2</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div>
+              <label class="tc-label"><i class="fa-solid fa-id-badge"></i> User ID to Track</label>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="tc-u2-id" placeholder="e.g. 7209584974" style="flex:1;" />
+                <button class="btn btn-primary" onclick="saveTrackingField('tracked_user2_id','tc-u2-id')"
+                  style="padding:10px 14px;background:linear-gradient(135deg,#f43f5e,#e11d48);">
+                  <i class="fa-solid fa-save"></i>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="tc-label"><i class="fa-solid fa-location-arrow"></i> Forward to Group ID</label>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="tc-f2-id" placeholder="e.g. -1002536019847" style="flex:1;" />
+                <button class="btn btn-primary" onclick="saveTrackingField('forward_user2_group_id','tc-f2-id')"
+                  style="padding:10px 14px;background:linear-gradient(135deg,#f43f5e,#e11d48);">
+                  <i class="fa-solid fa-save"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save All at once -->
+        <div class="glass-card" style="border-color:rgba(251,191,36,0.25);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1.2rem;">
+          <div style="font-size:2.5rem;color:#fbbf24;"><i class="fa-solid fa-floppy-disk"></i></div>
+          <h3 style="margin:0;">Save All Changes</h3>
+          <p style="color:var(--text-muted);font-size:.85rem;margin:0;">Apply all tracking IDs in one shot. Changes take effect immediately without restarting.</p>
+          <button class="btn btn-primary" onclick="saveAllTracking()" style="width:100%;justify-content:center;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;font-weight:700;">
+            <i class="fa-solid fa-bolt"></i> Apply All Tracking Settings
+          </button>
+          <div id="tracking-save-result" style="display:none;font-size:.83rem;width:100%;"></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 🤖  BOT INFO PANEL + QUICK MESSENGER                         -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:1rem;">
+        <i class="fa-solid fa-robot"></i> Bot Control Hub
+        <span class="v-tag" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">LIVE</span>
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;margin-bottom:4rem;">
+
+        <!-- Bot Info Card -->
+        <div class="glass-card" style="border-color:rgba(6,182,212,0.3);">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-id-card" style="color:#06b6d4;"></i> Bot Identity Matrix</h2>
+            <button class="btn btn-secondary" onclick="loadBotInfo()" style="padding:8px 16px;font-size:.8rem;">
+              <i class="fa-solid fa-rotate"></i> Refresh
+            </button>
+          </div>
+          <div id="bot-info-panel" style="display:flex;flex-direction:column;gap:1rem;">
+            <div class="bot-info-row">
+              <span class="info-label"><i class="fa-solid fa-robot"></i> Bot Name</span>
+              <span class="info-val" id="bi-name">Loading...</span>
+            </div>
+            <div class="bot-info-row">
+              <span class="info-label"><i class="fa-brands fa-telegram"></i> Username</span>
+              <span class="info-val" id="bi-username">—</span>
+            </div>
+            <div class="bot-info-row">
+              <span class="info-label"><i class="fa-solid fa-fingerprint"></i> Bot ID</span>
+              <span class="info-val mono" id="bi-id">—</span>
+            </div>
+            <div class="bot-info-row">
+              <span class="info-label"><i class="fa-solid fa-users"></i> Join Groups</span>
+              <span class="info-val" id="bi-join-groups">—</span>
+            </div>
+            <div class="bot-info-row">
+              <span class="info-label"><i class="fa-solid fa-eye"></i> Read All Msgs</span>
+              <span class="info-val" id="bi-read-all">—</span>
+            </div>
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--glass-border);">
+              <label style="font-size:.85rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:.7rem;">
+                <i class="fa-solid fa-bullseye"></i> Update Destination Group
+              </label>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="dest-group-input" placeholder="-1002510490386" style="flex:1;padding:10px;" />
+                <button class="btn btn-primary" onclick="updateDestination()" style="padding:10px 16px;white-space:nowrap;">
+                  <i class="fa-solid fa-save"></i> Save
+                </button>
+              </div>
+              <small style="color:var(--text-muted);margin-top:6px;display:block;">Currently forwarding to: <span id="dest-current" class="mono" style="color:var(--secondary);">Loading...</span></small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Message Sender -->
+        <div class="glass-card" style="border-color:rgba(99,102,241,0.3);">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-paper-plane" style="color:#6366f1;"></i> Instant Messenger</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div>
+              <label style="font-size:.85rem;font-weight:600;color:var(--text-muted);margin-bottom:.5rem;display:block;">Target ID (User or Group)</label>
+              <input type="text" id="qm-target-id" placeholder="e.g. 7039869055 or -100123456789" />
+            </div>
+            <div>
+              <label style="font-size:.85rem;font-weight:600;color:var(--text-muted);margin-bottom:.5rem;display:block;">Message (HTML supported)</label>
+              <textarea id="qm-message" style="height:130px;" placeholder="Type your message here... You can use &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt;, &lt;code&gt;code&lt;/code&gt;"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select id="qm-parse-mode" style="padding:10px;border-radius:12px;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);color:#fff;flex:1;">
+                <option value="HTML">HTML</option>
+                <option value="Markdown">Markdown</option>
+                <option value="MarkdownV2">MarkdownV2</option>
+              </select>
+              <button class="btn btn-primary" onclick="sendQuickMessage()" style="flex:2;justify-content:center;">
+                <i class="fa-solid fa-paper-plane"></i> Send Now
+              </button>
+            </div>
+            <div id="qm-result" style="display:none;padding:12px;border-radius:12px;font-size:.88rem;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 🔍  USER / GROUP LOOKUP                                       -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:1rem;">
+        <i class="fa-solid fa-magnifying-glass"></i> Entity Lookup
+        <span class="v-tag" style="background:linear-gradient(135deg,#f97316,#ea580c);">TG API</span>
+      </h2>
+      <div class="glass-card" style="margin-bottom:4rem;border-color:rgba(249,115,22,0.25);">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:1.5rem;">
+          <div style="position:relative;flex:1;">
+            <i class="fa-solid fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+            <input type="text" id="lookup-id-input" placeholder="Enter any User ID, Group ID, or @username..."
+              style="padding-left:3rem;" onkeydown="if(event.key==='Enter') lookupEntity()" />
+          </div>
+          <button class="btn btn-primary" onclick="lookupEntity()" style="padding:12px 24px;white-space:nowrap;background:linear-gradient(135deg,#f97316,#ea580c);box-shadow:0 8px 20px -5px rgba(249,115,22,.5);">
+            <i class="fa-solid fa-radar"></i> Lookup
+          </button>
+        </div>
+        <div id="lookup-result" style="display:none;">
+          <div style="padding:1.5rem;background:rgba(0,0,0,.15);border-radius:18px;border:1px solid var(--glass-border);">
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;" id="lookup-result-grid"></div>
+          </div>
+        </div>
+        <div id="lookup-loading" style="display:none;text-align:center;padding:2rem;color:var(--text-muted);">
+          <i class="fa-solid fa-spinner fa-spin"></i> Querying Telegram API...
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 🏆  TOP ACTIVE USERS LEADERBOARD                             -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:1rem;">
+        <i class="fa-solid fa-trophy"></i> Activity Leaderboard
+        <span class="v-tag" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">TOP 10</span>
+      </h2>
+      <div class="glass-card" style="margin-bottom:4rem;border-color:rgba(251,191,36,0.25);">
+        <div class="card-header" style="margin-bottom:1.5rem;">
+          <h2><i class="fa-solid fa-chart-bar" style="color:#fbbf24;"></i> Most Active Users</h2>
+          <button class="btn btn-secondary" onclick="loadLeaderboard()" style="padding:8px 16px;font-size:.8rem;">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+        <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:10px;">
+          <div style="text-align:center;padding:2rem;color:var(--text-muted);">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading leaderboard...
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 🔑  KEYWORD MANAGER                                           -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:1rem;">
+        <i class="fa-solid fa-tags"></i> Keyword Manager
+        <span class="v-tag" style="background:linear-gradient(135deg,#10b981,#059669);">LIVE EDIT</span>
+      </h2>
+      <div class="glass-card" style="margin-bottom:4rem;border-color:rgba(16,185,129,0.25);">
+        <div style="display:flex;gap:10px;margin-bottom:1.5rem;">
+          <input type="text" id="keyword-input" placeholder="Add a new keyword or phrase..."
+            style="flex:1;" onkeydown="if(event.key==='Enter') addKeyword()" />
+          <button class="btn btn-primary" onclick="addKeyword()" style="padding:12px 24px;white-space:nowrap;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 8px 20px -5px rgba(16,185,129,.5);">
+            <i class="fa-solid fa-plus"></i> Add Keyword
+          </button>
+        </div>
+        <div id="keyword-pills" style="display:flex;flex-wrap:wrap;gap:10px;min-height:60px;padding:1rem;background:rgba(0,0,0,.1);border-radius:16px;border:1px solid var(--glass-border);">
+          <span style="color:var(--text-muted);font-size:.9rem;align-self:center;">Loading keywords...</span>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 📤  EXPORT CONTROLS                                           -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <h2 class="section-title" style="margin-top:1rem;">
+        <i class="fa-solid fa-file-export"></i> Data Export
+        <span class="v-tag" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">CSV</span>
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:4rem;">
+        <div class="glass-card export-card" style="text-align:center;border-color:rgba(99,102,241,0.3);">
+          <div style="font-size:3rem;margin-bottom:1rem;color:#6366f1;"><i class="fa-solid fa-users"></i></div>
+          <h3 style="margin-bottom:.5rem;">Export All Users</h3>
+          <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">Download complete user registry as CSV file including IDs, names, usernames and message counts.</p>
+          <button class="btn btn-primary" onclick="exportCSV('users')" style="width:100%;justify-content:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+            <i class="fa-solid fa-download"></i> Download Users CSV
+          </button>
+        </div>
+        <div class="glass-card export-card" style="text-align:center;border-color:rgba(244,63,94,0.3);">
+          <div style="font-size:3rem;margin-bottom:1rem;color:#f43f5e;"><i class="fa-solid fa-people-group"></i></div>
+          <h3 style="margin-bottom:.5rem;">Export All Groups</h3>
+          <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">Download complete groups registry as CSV file including IDs, titles, types and integration dates.</p>
+          <button class="btn btn-primary" onclick="exportCSV('groups')" style="width:100%;justify-content:center;background:linear-gradient(135deg,#f43f5e,#e11d48);">
+            <i class="fa-solid fa-download"></i> Download Groups CSV
+          </button>
+        </div>
+        <div class="glass-card export-card" style="text-align:center;border-color:rgba(16,185,129,0.3);">
+          <div style="font-size:3rem;margin-bottom:1rem;color:#10b981;"><i class="fa-solid fa-database"></i></div>
+          <h3 style="margin-bottom:.5rem;">Download Full Database</h3>
+          <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">Download the raw SQLite database file for local inspection, backup or migration.</p>
+          <button class="btn btn-primary" onclick="downloadDB()" style="width:100%;justify-content:center;background:linear-gradient(135deg,#10b981,#059669);">
+            <i class="fa-solid fa-database"></i> Download bot.db
+          </button>
+        </div>
+      </div>
+
+      <footer>
+        <p>&copy; 2026 Hinata Neural Systems v3.0 PRO — Managed by <a href="https://t.me/ShawonXnone" style="color:var(--primary);text-decoration:none;">@ShawonXnone</a></p>
+      </footer>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" style="position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
+    <script src="/static/script.js"></script>
+    <script>
+      // ═══════════════════════ NEW FEATURE JS ═══════════════════════
+
+      const AUTH_HEADER = () => ({ "Content-Type": "application/json", "X-Dashboard-Password": sessionStorage.getItem("hinata_pwd") || localStorage.getItem("dashboard_pwd") || "" });
+
+      // Toast System
+      function showToast(msg, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        const colors = { success: "#10b981", error: "#f43f5e", info: "#6366f1", warn: "#fbbf24" };
+        const icons = { success: "check-circle", error: "circle-xmark", info: "circle-info", warn: "triangle-exclamation" };
+        toast.style.cssText = `
+          background:rgba(10,12,24,.95);border:1px solid ${colors[type]}44;
+          border-left:4px solid ${colors[type]};padding:14px 20px;border-radius:14px;
+          color:#fff;font-size:.9rem;display:flex;align-items:center;gap:12px;
+          backdrop-filter:blur(20px);min-width:280px;pointer-events:all;
+          animation:toastIn .4s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+          box-shadow:0 10px 30px rgba(0,0,0,.5);
+        `;
+        toast.innerHTML = `<i class="fa-solid fa-${icons[type]}" style="color:${colors[type]};font-size:1.1rem;"></i><span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { toast.style.animation = "toastOut .3s ease forwards"; setTimeout(() => toast.remove(), 300); }, 3500);
+      }
+
+      // ── Bot Info ──
+      async function loadBotInfo() {
+        try {
+          const r = await fetch("/api/bot_info", { headers: AUTH_HEADER() });
+          const data = await r.json();
+          if (data.success) {
+            document.getElementById("bi-name").textContent = data.first_name || "—";
+            document.getElementById("bi-username").textContent = "@" + (data.username || "—");
+            document.getElementById("bi-id").textContent = data.id || "—";
+            document.getElementById("bi-join-groups").textContent = data.can_join_groups ? "✅ Yes" : "❌ No";
+            document.getElementById("bi-read-all").textContent = data.can_read_all_group_messages ? "✅ Yes" : "❌ No";
+          }
+        } catch(e) { console.error(e); }
+      }
+
+      async function loadDestinationInfo() {
+        try {
+          const r = await fetch("/api/config", { headers: AUTH_HEADER() });
+          const data = await r.json();
+          const val = data.forward_group_id || "Not set";
+          document.getElementById("dest-current").textContent = val;
+          document.getElementById("dest-group-input").placeholder = val;
+        } catch(e) {}
+      }
+
+      async function updateDestination() {
+        const val = document.getElementById("dest-group-input").value.trim();
+        if (!val) { showToast("Please enter a group ID", "warn"); return; }
+        try {
+          const r = await fetch("/api/update_destination", {
+            method: "POST", headers: AUTH_HEADER(),
+            body: JSON.stringify({ destination_group_id: val })
+          });
+          const data = await r.json();
+          if (data.success) { showToast(data.message, "success"); loadDestinationInfo(); }
+          else showToast(data.error || "Failed", "error");
+        } catch(e) { showToast("Request failed", "error"); }
+      }
+
+      // ── Quick Message ──
+      async function sendQuickMessage() {
+        const tid = document.getElementById("qm-target-id").value.trim();
+        const msg = document.getElementById("qm-message").value.trim();
+        const pm = document.getElementById("qm-parse-mode").value;
+        const res = document.getElementById("qm-result");
+        if (!tid || !msg) { showToast("Enter target ID and message", "warn"); return; }
+        res.style.display = "none";
+        try {
+          const r = await fetch("/api/send_message", {
+            method: "POST", headers: AUTH_HEADER(),
+            body: JSON.stringify({ target_id: tid, message: msg, parse_mode: pm })
+          });
+          const data = await r.json();
+          if (data.success) {
+            res.style.cssText = "display:block;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;padding:12px;border-radius:12px;font-size:.88rem;";
+            res.innerHTML = `<i class="fa-solid fa-check"></i> Sent! Message ID: <b>${data.message_id}</b> in chat <b>${data.chat_id}</b>`;
+            showToast("Message sent successfully!", "success");
+          } else {
+            res.style.cssText = "display:block;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);color:#f43f5e;padding:12px;border-radius:12px;font-size:.88rem;";
+            res.innerHTML = `<i class="fa-solid fa-xmark"></i> ${data.error}`;
+            showToast(data.error || "Send failed", "error");
+          }
+        } catch(e) { showToast("Request failed", "error"); }
+      }
+
+      // ── Entity Lookup ──
+      async function lookupEntity() {
+        const eid = document.getElementById("lookup-id-input").value.trim();
+        if (!eid) { showToast("Enter an ID or username", "warn"); return; }
+        document.getElementById("lookup-result").style.display = "none";
+        document.getElementById("lookup-loading").style.display = "block";
+        try {
+          const r = await fetch(`/api/lookup?entity_id=${encodeURIComponent(eid)}`, { headers: AUTH_HEADER() });
+          const data = await r.json();
+          document.getElementById("lookup-loading").style.display = "none";
+          if (data.success) {
+            const d = data.data;
+            const isGroup = ["group","supergroup","channel"].includes(d.type);
+            const name = isGroup ? (d.title || "Unknown Group") : [d.first_name, d.last_name].filter(Boolean).join(" ") || "Unknown";
+            const fields = [
+              { label: "Type", val: d.type, icon: "tag" },
+              { label: "ID", val: d.id, icon: "fingerprint" },
+              { label: isGroup ? "Group Name" : "Full Name", val: name, icon: isGroup ? "people-group" : "user" },
+              { label: "Username", val: d.username ? "@" + d.username : "None", icon: "at" },
+            ];
+            if (isGroup) {
+              fields.push({ label: "Members", val: d.member_count ?? "N/A", icon: "users" });
+              if (d.description) fields.push({ label: "Description", val: d.description.slice(0,100) + (d.description.length>100?"…":""), icon: "align-left" });
+            } else {
+              if (d.bio) fields.push({ label: "Bio", val: d.bio.slice(0,100) + (d.bio.length>100?"…":""), icon: "circle-info" });
+            }
+            document.getElementById("lookup-result-grid").innerHTML = fields.map(f => `
+              <div class="lookup-field">
+                <span class="lf-label"><i class="fa-solid fa-${f.icon}"></i> ${f.label}</span>
+                <span class="lf-val">${f.val}</span>
+              </div>
+            `).join("");
+            document.getElementById("lookup-result").style.display = "block";
+          } else {
+            showToast(data.error || "Lookup failed", "error");
+          }
+        } catch(e) { document.getElementById("lookup-loading").style.display = "none"; showToast("Request failed", "error"); }
+      }
+
+      // ── Leaderboard ──
+      async function loadLeaderboard() {
+        const list = document.getElementById("leaderboard-list");
+        list.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>`;
+        try {
+          const r = await fetch("/api/top_users?limit=10", { headers: AUTH_HEADER() });
+          const data = await r.json();
+          if (data.success && data.users.length) {
+            const medals = ["🥇","🥈","🥉"];
+            list.innerHTML = data.users.map((u,i) => {
+              const rank = medals[i] || `#${i+1}`;
+              const pct = Math.max(5, Math.round((u.message_count / (data.users[0].message_count || 1)) * 100));
+              return `
+              <div class="lb-row">
+                <span class="lb-rank">${rank}</span>
+                <div class="lb-info">
+                  <div class="lb-name">${u.full_name || "Unknown"} <span class="lb-handle">${u.username ? "@"+u.username : ""}</span></div>
+                  <div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%;background:${i===0?"linear-gradient(90deg,#fbbf24,#f59e0b)":i===1?"linear-gradient(90deg,#94a3b8,#cbd5e1)":i===2?"linear-gradient(90deg,#cd7c30,#b45309)":"linear-gradient(90deg,#c084fc,#818cf8)"};"></div></div>
+                </div>
+                <span class="lb-count">${(u.message_count||0).toLocaleString()} msgs</span>
+              </div>`;
+            }).join("");
+          } else {
+            list.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);">No data yet. Users will appear here after messaging the bot.</div>`;
+          }
+        } catch(e) { list.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--danger);">Failed to load leaderboard.</div>`; }
+      }
+
+      // ── Keyword Manager ──
+      async function loadKeywords() {
+        try {
+          const r = await fetch("/api/keywords", { headers: AUTH_HEADER() });
+          const data = await r.json();
+          renderKeywordPills(data.keywords || []);
+        } catch(e) {
+          document.getElementById("keyword-pills").innerHTML = `<span style="color:var(--danger);font-size:.85rem;">Failed to load keywords.</span>`;
+        }
+      }
+
+      function renderKeywordPills(keywords) {
+        const container = document.getElementById("keyword-pills");
+        if (!keywords.length) {
+          container.innerHTML = `<span style="color:var(--text-muted);font-size:.85rem;align-self:center;">No keywords added yet. Type a keyword above and press Add.</span>`;
+          return;
+        }
+        container.innerHTML = keywords.map(kw => `
+          <span class="kw-pill">
+            <i class="fa-solid fa-tag" style="font-size:.75rem;opacity:.7;"></i>
+            ${kw}
+            <button onclick="removeKeyword('${kw}')" style="background:none;border:none;cursor:pointer;color:var(--danger);padding:0 0 0 6px;font-size:.9rem;" title="Remove">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </span>
+        `).join("");
+      }
+
+      async function addKeyword() {
+        const input = document.getElementById("keyword-input");
+        const kw = input.value.trim();
+        if (!kw) { showToast("Enter a keyword", "warn"); return; }
+        try {
+          const r = await fetch("/api/keywords/add", {
+            method: "POST", headers: AUTH_HEADER(),
+            body: JSON.stringify({ keyword: kw })
+          });
+          const data = await r.json();
+          if (data.success) { input.value = ""; renderKeywordPills(data.keywords); showToast(`Keyword "${kw}" added`, "success"); }
+          else showToast(data.error || "Failed", "error");
+        } catch(e) { showToast("Request failed", "error"); }
+      }
+
+      async function removeKeyword(kw) {
+        try {
+          const r = await fetch("/api/keywords/remove", {
+            method: "POST", headers: AUTH_HEADER(),
+            body: JSON.stringify({ keyword: kw })
+          });
+          const data = await r.json();
+          if (data.success) { renderKeywordPills(data.keywords); showToast(`Keyword "${kw}" removed`, "info"); }
+          else showToast(data.error || "Failed", "error");
+        } catch(e) { showToast("Request failed", "error"); }
+      }
+
+      // ── CSV Export ──
+      function exportCSV(type) {
+        const pwd = sessionStorage.getItem("hinata_pwd") || "";
+        const url = `/api/export/${type}?pwd=${encodeURIComponent(pwd)}`;
+        const a = document.createElement("a");
+        a.href = url; a.download = `hinata_${type}.csv`; a.click();
+        showToast(`Downloading ${type} CSV...`, "info");
+      }
+
+      // ── Init all new panels on login ──
+      const _origAttemptLogin = window.attemptLogin;
+      document.addEventListener("DOMContentLoaded", () => {
+        // Hook into existing login success to load new panels
+        const origCheck = window.attemptLogin;
+        if (origCheck) {
+          window.attemptLogin = function() {
+            origCheck();
+            setTimeout(() => {
+              if (sessionStorage.getItem("hinata_pwd") || localStorage.getItem("dashboard_pwd")) {
+                loadBotInfo();
+                loadDestinationInfo();
+                loadLeaderboard();
+                loadKeywords();
+              }
+            }, 500);
+          };
+        }
+        // Also try to auto-load if already logged in
+        if (sessionStorage.getItem("hinata_pwd") || localStorage.getItem("dashboard_pwd")) {
+          loadBotInfo();
+          loadDestinationInfo();
+          loadLeaderboard();
+          loadKeywords();
+        }
+      });
+    </script>
+
+    <style>
+      @keyframes toastIn { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+      @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(30px); } }
+
+      .bot-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: rgba(0,0,0,.15);
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+      }
+      .info-label { color: var(--text-muted); font-size: .85rem; display:flex;align-items:center;gap:8px; }
+      .info-val { font-weight: 700; font-size: .95rem; color: var(--secondary); }
+      .info-val.mono { font-family: 'JetBrains Mono', monospace; font-size: .85rem; }
+
+      .lookup-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 180px;
+        flex: 1;
+      }
+      .lf-label { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); display:flex;align-items:center;gap:6px; }
+      .lf-val { font-size: .95rem; font-weight: 700; color: var(--text-main); word-break: break-all; }
+
+      /* Leaderboard */
+      .lb-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 18px;
+        background: rgba(0,0,0,.12);
+        border-radius: 14px;
+        border: 1px solid var(--glass-border);
+        transition: .3s;
+      }
+      .lb-row:hover { background: rgba(255,255,255,.04); border-color: rgba(251,191,36,.3); }
+      .lb-rank { font-size: 1.4rem; width: 36px; text-align: center; flex-shrink: 0; }
+      .lb-info { flex: 1; }
+      .lb-name { font-weight: 700; font-size: .95rem; }
+      .lb-handle { color: var(--text-muted); font-size: .8rem; font-weight: 400; }
+      .lb-bar-wrap { height: 6px; background: rgba(255,255,255,.06); border-radius: 6px; margin-top: 6px; overflow: hidden; }
+      .lb-bar { height: 100%; border-radius: 6px; transition: width .8s cubic-bezier(.175,.885,.32,1.275); }
+      .lb-count { font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: var(--text-muted); flex-shrink: 0; }
+
+      /* Keyword Pills */
+      .kw-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background: rgba(16,185,129,.12);
+        border: 1px solid rgba(16,185,129,.3);
+        border-radius: 30px;
+        font-size: .88rem;
+        color: #34d399;
+        font-weight: 600;
+        transition: .2s;
+      }
+      .kw-pill:hover { background: rgba(16,185,129,.2); transform: scale(1.03); }
+
+      /* Export Cards */
+      .export-card { transition: all .4s cubic-bezier(.175,.885,.32,1.275) !important; }
+      .export-card:hover { transform: translateY(-10px) scale(1.02) !important; }
+
+      /* Toggle switches */
+      .tgl-wrap { display:flex;align-items:center; }
+      .tgl-switch { position:relative;display:inline-block;width:54px;height:28px;cursor:pointer; }
+      .tgl-switch input { opacity:0;width:0;height:0; }
+      .tgl-slider { position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--glass-border);border-radius:28px;transition:.35s; }
+      .tgl-slider:before { content:"";position:absolute;width:20px;height:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.35s;box-shadow:0 2px 8px rgba(0,0,0,.4); }
+      .tgl-switch input:checked + .tgl-slider { background:linear-gradient(135deg,#10b981,#059669);border-color:#10b981; }
+      .tgl-switch input:checked + .tgl-slider:before { transform:translateX(26px); }
+      .status-badge { padding:10px 14px;border-radius:10px;background:rgba(0,0,0,.15);border:1px solid var(--glass-border);font-size:.85rem;display:flex;align-items:center;gap:8px; }
+      .tsc-row { display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(0,0,0,.12);border-radius:10px;border:1px solid var(--glass-border); }
+      .tsc-label { color:var(--text-muted);font-size:.82rem; }
+      .tsc-val { font-weight:700;font-size:.82rem;color:var(--secondary); }
+      .tc-label { font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:.5rem;display:flex;align-items:center;gap:6px; }
+      @keyframes toastIn { from { opacity:0;transform:translateX(30px); } to { opacity:1;transform:translateX(0); } }
+      @keyframes toastOut { from { opacity:1;transform:translateX(0); } to { opacity:0;transform:translateX(30px); } }
+    </style>
+
+    <div id="toast-container" style="position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
+    <script>
+      // Second script block continues...
+
+      function showToast(msg,type="success"){const cnt=document.getElementById("toast-container");const t=document.createElement("div");const c={success:"#10b981",error:"#f43f5e",info:"#6366f1",warn:"#fbbf24"};const ic={success:"check-circle",error:"circle-xmark",info:"circle-info",warn:"triangle-exclamation"};t.style.cssText=`background:rgba(10,12,24,.95);border:1px solid ${c[type]}44;border-left:4px solid ${c[type]};padding:14px 20px;border-radius:14px;color:#fff;font-size:.9rem;display:flex;align-items:center;gap:12px;backdrop-filter:blur(20px);min-width:280px;pointer-events:all;animation:toastIn .4s cubic-bezier(0.175,0.885,0.32,1.275) forwards;box-shadow:0 10px 30px rgba(0,0,0,.5);`;t.innerHTML=`<i class="fa-solid fa-${ic[type]}" style="color:${c[type]};font-size:1.1rem;"></i><span>${msg}</span>`;cnt.appendChild(t);setTimeout(()=>{t.style.animation="toastOut .3s ease forwards";setTimeout(()=>t.remove(),300);},3500);}
+
+      async function loadBotInfo(){try{const r=await fetch("/api/bot_info",{headers:AUTH_HEADER()});const d=await r.json();if(d.success){const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};s("bi-name",d.first_name||"—");s("bi-username","@"+(d.username||"—"));s("bi-id",d.id||"—");s("bi-join-groups",d.can_join_groups?"✅ Yes":"❌ No");s("bi-read-all",d.can_read_all_group_messages?"✅ Yes":"❌ No");}}catch(e){}}
+
+      async function loadDestinationInfo(){try{const r=await fetch("/api/config",{headers:AUTH_HEADER()});const d=await r.json();const el=document.getElementById("dest-current");if(el)el.textContent=d.destination_group_id||"Not set";const inp=document.getElementById("dest-group-input");if(inp&&d.destination_group_id)inp.placeholder=d.destination_group_id;}catch(e){}}
+
+      async function updateDestination(){const val=document.getElementById("dest-group-input").value.trim();if(!val){showToast("Enter a group ID","warn");return;}try{const r=await fetch("/api/update_destination",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify({destination_group_id:val})});const d=await r.json();if(d.success){showToast(d.message,"success");loadDestinationInfo();loadTrackingConfig();}else showToast(d.error||"Failed","error");}catch(e){showToast("Request failed","error");}}
+
+      async function loadTrackingConfig(){
+        try{
+          const r=await fetch("/api/config",{headers:AUTH_HEADER()});
+          const cfg=await r.json();
+          const usrOn=cfg.user_tracking_enabled!==false;
+          const tu=document.getElementById("tgl-user-tracking");
+          if(tu)tu.checked=usrOn;
+          const sbu=document.getElementById("status-user-tracking");
+          if(sbu)sbu.innerHTML=usrOn?`<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> <b style="color:#10b981;">ACTIVE</b> — Forwarding private chats`:`<i class="fa-solid fa-circle-xmark" style="color:#f43f5e;"></i> <b style="color:#f43f5e;">PAUSED</b> — Disabled`;
+          const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v||"—";};
+          s("tsc-dest",cfg.destination_group_id);
+          s("tsc-u1",cfg.tracked_user1_id);s("tsc-f1",cfg.forward_user1_group_id);
+          s("tsc-u2",cfg.tracked_user2_id);s("tsc-f2",cfg.forward_user2_group_id);
+          const fill=(id,v)=>{const el=document.getElementById(id);if(el&&v)el.placeholder=v;};
+          fill("tc-dest-id",cfg.destination_group_id);
+          fill("tc-u1-id",cfg.tracked_user1_id);fill("tc-f1-id",cfg.forward_user1_group_id);
+          fill("tc-u2-id",cfg.tracked_user2_id);fill("tc-f2-id",cfg.forward_user2_group_id);
+          const di=document.getElementById("dest-group-input");if(di&&cfg.destination_group_id)di.placeholder=cfg.destination_group_id;
+        }catch(e){}
+      }
+
+      async function toggleTracking(field,value){try{const r=await fetch("/api/tracking-update",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify({[field]:value})});const d=await r.json();const lbl=field==="group_tracking_enabled"?"Group":"Private";if(d.success){showToast(`${lbl} tracking ${value?"enabled ✅":"disabled 🔴"}`,value?"success":"warn");loadTrackingConfig();}else showToast(d.error||"Failed","error");}catch(e){showToast("Request failed","error");}}
+
+      async function saveTrackingField(field,inputId){const el=document.getElementById(inputId);const val=el?.value.trim();if(!val){showToast("Enter a value","warn");return;}try{const r=await fetch("/api/tracking-update",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify({[field]:val})});const d=await r.json();if(d.success){showToast((d.changes||["Saved"]).join(" | "),"success");el.value="";loadTrackingConfig();}else showToast(d.error||"Failed","error");}catch(e){showToast("Request failed","error");}}
+
+      async function saveAllTracking(){
+        const payload={};
+        [["destination_group_id","tc-dest-id"],["tracked_user1_id","tc-u1-id"],["forward_user1_group_id","tc-f1-id"],["tracked_user2_id","tc-u2-id"],["forward_user2_group_id","tc-f2-id"]].forEach(([k,id])=>{const v=document.getElementById(id)?.value.trim();if(v)payload[k]=v;});
+        if(!Object.keys(payload).length){showToast("No changes to save","warn");return;}
+        const res=document.getElementById("tracking-save-result");
+        try{const r=await fetch("/api/tracking-update",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify(payload)});const d=await r.json();
+          if(d.success){res.style.cssText="display:block;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;padding:10px;border-radius:10px;text-align:left;";res.innerHTML="<b>✅ Applied:</b><br>"+(d.changes||["OK"]).map(c=>`• ${c}`).join("<br>");showToast("All settings applied!","success");loadTrackingConfig();}
+          else{res.style.cssText="display:block;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);color:#f43f5e;padding:10px;border-radius:10px;";res.textContent="❌ "+(d.error||"Failed");showToast(d.error||"Failed","error");}
+        }catch(e){showToast("Request failed","error");}
+      }
+
+      async function sendQuickMessage(){const tid=document.getElementById("qm-target-id").value.trim();const msg=document.getElementById("qm-message").value.trim();const pm=document.getElementById("qm-parse-mode").value;const res=document.getElementById("qm-result");if(!tid||!msg){showToast("Enter target ID and message","warn");return;}res.style.display="none";try{const r=await fetch("/api/send_message",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify({target_id:tid,message:msg,parse_mode:pm})});const d=await r.json();if(d.success){res.style.cssText="display:block;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;padding:12px;border-radius:12px;font-size:.88rem;";res.innerHTML=`<i class="fa-solid fa-check"></i> Sent! MsgID: <b>${d.message_id}</b> in <b>${d.chat_id}</b>`;showToast("Message sent!","success");}else{res.style.cssText="display:block;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);color:#f43f5e;padding:12px;border-radius:12px;font-size:.88rem;";res.innerHTML=`<i class="fa-solid fa-xmark"></i> ${d.error}`;showToast(d.error||"Failed","error");}}catch(e){showToast("Request failed","error");}}
+
+      async function lookupEntity(){const eid=document.getElementById("lookup-id-input").value.trim();if(!eid){showToast("Enter an ID","warn");return;}document.getElementById("lookup-result").style.display="none";document.getElementById("lookup-loading").style.display="block";try{const r=await fetch(`/api/lookup?entity_id=${encodeURIComponent(eid)}`,{headers:AUTH_HEADER()});const data=await r.json();document.getElementById("lookup-loading").style.display="none";if(data.success){const d=data.data;const ig=["group","supergroup","channel"].includes(d.type);const name=ig?(d.title||"Unknown"):[d.first_name,d.last_name].filter(Boolean).join(" ")||"Unknown";const fields=[{label:"Type",val:d.type,icon:"tag"},{label:"ID",val:d.id,icon:"fingerprint"},{label:ig?"Group Name":"Full Name",val:name,icon:ig?"people-group":"user"},{label:"Username",val:d.username?"@"+d.username:"None",icon:"at"}];if(ig){fields.push({label:"Members",val:d.member_count??"N/A",icon:"users"});if(d.description)fields.push({label:"Description",val:d.description.slice(0,100),icon:"align-left"});}else{if(d.bio)fields.push({label:"Bio",val:d.bio.slice(0,100),icon:"circle-info"});}document.getElementById("lookup-result-grid").innerHTML=fields.map(f=>`<div class="lookup-field"><span class="lf-label"><i class="fa-solid fa-${f.icon}"></i> ${f.label}</span><span class="lf-val">${f.val}</span></div>`).join("");document.getElementById("lookup-result").style.display="block";}else showToast(data.error||"Lookup failed","error");}catch(e){document.getElementById("lookup-loading").style.display="none";showToast("Request failed","error");}}
+
+      async function loadLeaderboard(){const list=document.getElementById("leaderboard-list");list.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>`;try{const r=await fetch("/api/top_users?limit=10",{headers:AUTH_HEADER()});const data=await r.json();if(data.success&&data.users.length){const medals=["🥇","🥈","🥉"];list.innerHTML=data.users.map((u,i)=>{const rank=medals[i]||`#${i+1}`;const pct=Math.max(5,Math.round((u.message_count/(data.users[0].message_count||1))*100));return`<div class="lb-row"><span class="lb-rank">${rank}</span><div class="lb-info"><div class="lb-name">${u.full_name||"Unknown"} <span class="lb-handle">${u.username?"@"+u.username:""}</span></div><div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%;background:${i===0?"linear-gradient(90deg,#fbbf24,#f59e0b)":i===1?"linear-gradient(90deg,#94a3b8,#cbd5e1)":i===2?"linear-gradient(90deg,#cd7c30,#b45309)":"linear-gradient(90deg,#c084fc,#818cf8)"};"></div></div></div><span class="lb-count">${(u.message_count||0).toLocaleString()} msgs</span></div>`;}).join("");}else list.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--text-muted);">No data yet.</div>`;}catch(e){list.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--danger);">Failed.</div>`;}}
+
+      async function loadKeywords(){try{const r=await fetch("/api/keywords",{headers:AUTH_HEADER()});const d=await r.json();renderKeywordPills(d.keywords||[]);}catch(e){document.getElementById("keyword-pills").innerHTML=`<span style="color:var(--danger);">Failed to load.</span>`;}}
+      function renderKeywordPills(kws){const c=document.getElementById("keyword-pills");if(!kws.length){c.innerHTML=`<span style="color:var(--text-muted);font-size:.85rem;align-self:center;">No keywords yet.</span>`;return;}c.innerHTML=kws.map(kw=>`<span class="kw-pill"><i class="fa-solid fa-tag" style="font-size:.75rem;opacity:.7;"></i>${kw}<button onclick="removeKeyword('${kw}')" style="background:none;border:none;cursor:pointer;color:var(--danger);padding:0 0 0 6px;font-size:.9rem;"><i class="fa-solid fa-xmark"></i></button></span>`).join("");}
+      async function addKeyword(){const input=document.getElementById("keyword-input");const kw=input.value.trim();if(!kw){showToast("Enter a keyword","warn");return;}try{const r=await fetch("/api/keywords/add",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify({keyword:kw})});const d=await r.json();if(d.success){input.value="";renderKeywordPills(d.keywords);showToast(`"${kw}" added`,"success");}else showToast(d.error||"Failed","error");}catch(e){showToast("Request failed","error");}}
+      async function removeKeyword(kw){try{const r=await fetch("/api/keywords/remove",{method:"POST",headers:AUTH_HEADER(),body:JSON.stringify({keyword:kw})});const d=await r.json();if(d.success){renderKeywordPills(d.keywords);showToast(`"${kw}" removed`,"info");}else showToast(d.error||"Failed","error");}catch(e){showToast("Request failed","error");}}
+
+      function exportCSV(type){const pwd=sessionStorage.getItem("hinata_pwd")||localStorage.getItem("dashboard_pwd")||"";const a=document.createElement("a");a.href=`/api/export/${type}?pwd=${encodeURIComponent(pwd)}`;a.download=`hinata_${type}.csv`;a.click();showToast(`Downloading ${type} CSV...`,"info");}
+      function downloadDB(){const pwd=sessionStorage.getItem("hinata_pwd")||localStorage.getItem("dashboard_pwd")||"";window.open(`/api/download_db?pwd=${encodeURIComponent(pwd)}`,"_blank");showToast("Downloading database...","info");}
+
+      function initNewPanels(){loadBotInfo();loadDestinationInfo();loadTrackingConfig();loadLeaderboard();loadKeywords();}
+      document.addEventListener("DOMContentLoaded",()=>{if(sessionStorage.getItem("hinata_pwd")||localStorage.getItem("dashboard_pwd"))initNewPanels();});
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+python-telegram-bot==20.3
+httpx~=0.24.0
+httpcore
+yt-dlp
+fastapi
+uvicorn
+jinja2
+python-multipart==0.0.9
+qrcode[pil]
+Pillow

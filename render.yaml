@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: hinata-bot-panel
+    runtime: python
+    region: singapore  # Change to your preferred region
+    plan: free  # or 'starter' for paid plan
+    
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    
+    # Health check to ensure service is running
+    healthCheckPath: /
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.10
+      
+      # Optional: Set bot token here instead of token.txt
+      # - key: BOT_TOKEN
+      #   sync: false  # Prevents logging in build logs
+      
+      # Optional: Custom port (Render sets this automatically)
+      # - key: PORT
+      #   value: 10000
+    
+    # Auto-deploy on push to main branch
+    autoDeploy: true
+    
+    # Disk storage for persistent data (optional, paid feature)
+    # disk:
+    #   name: hinata-data
+    #   mountPath: /data
+    #   sizeGB: 1
